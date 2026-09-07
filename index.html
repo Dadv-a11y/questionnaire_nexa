@@ -149,7 +149,7 @@
     .topbar{padding:18px 18px 0;}
     .mobile-progress{display:block;}
     .mobile-step-label{display:block;}
-    .panel{padding:28px 20px 30px; border-left-width:4px;}
+    .panel{padding:16px 20px 12px; border-left-width:4px;}
     .step-title{font-size:23px;}
     .intro-hero .step-title{font-size:27px;}
     .recap-item{flex-direction:column; gap:2px;}
@@ -162,7 +162,7 @@
 
 
 <div class="app">
-  <form id="cadrageForm" action="https://formsubmit.co/darilvia64@gmail.com" method="POST" novalidate>
+  <form id="cadrageForm" action="https://formsubmit.co/e6cedaa646a5dd096660cf87bad253c5" method="POST" novalidate>
     <input type="hidden" name="_subject" id="subjectField" value="Nouveau questionnaire de cadrage — plateforme e-commerce">
     <input type="hidden" name="_template" value="table">
     <input type="hidden" name="_captcha" value="false">
@@ -213,6 +213,9 @@
     var v = get("ads_enabled");
     return v === V_ADS_LANCEMENT || v === V_ADS_PLUSTARD;
   }
+  function deliveryDetailsRelevant(get){
+    return get("delivery_manager") !== "Chaque vendeur livre lui-même";
+  }
 
   /* ===================== Schéma du questionnaire ===================== */
   var STEPS = [
@@ -230,11 +233,15 @@
           V_HYBRIDE
         ]},
         { key:"launch_zone", name:"Zone géographique de lancement", type:"radio", required:true, options:[
-          "Niamey uniquement","Plusieurs villes du Niger","Tout le Niger dès le lancement","Niger, puis expansion sous-régionale"
+          "Niamey uniquement","Plusieurs villes du Niger","Tout le Niger dès le lancement","Niger, puis expansion sous-régionale","Aucune des réponses ci-dessus"
         ]},
+        { key:"launch_zone_other", name:"Précisez la zone géographique envisagée", type:"text",
+          condition:function(get){ return get("launch_zone")==="Aucune des réponses ci-dessus"; } },
         { key:"languages", name:"Langues disponibles sur la plateforme", type:"checkbox", options:[
-          "Français","Haoussa","Zarma","Autre langue"
-        ]}
+          "Français","Haoussa","Autre langue"
+        ]},
+        { key:"languages_other", name:"Précisez la ou les autres langues", type:"text",
+          condition:function(){ return getCheckedList("languages").indexOf("Autre langue") !== -1; } }
       ]
     },
     {
@@ -277,6 +284,8 @@
         { key:"categories", name:"Quelles catégories de produits seront vendues ?", type:"checkbox", required:true, options:[
           "Mode & vêtements","Électronique & téléphonie","Alimentation","Beauté & cosmétique","Maison & électroménager","Automobile","Produits agricoles","Services","Autre"
         ]},
+        { key:"categories_other", name:"Précisez les autres catégories de produits", type:"text",
+          condition:function(){ return getCheckedList("categories").indexOf("Autre") !== -1; } },
         { key:"catalog_launch_size", name:"Nombre de produits prévu au lancement", type:"select", required:true, options:[
           "Moins de 100","100 à 1 000","1 000 à 10 000","10 000 à 50 000","Plus de 50 000"
         ]},
@@ -310,17 +319,17 @@
         { key:"delivery_manager", name:"Qui assurera la livraison des commandes ?", type:"radio", required:true, options:[
           "Chaque vendeur livre lui-même","La plateforme dispose de sa propre flotte de livreurs","Des livreurs indépendants partenaires","Une société de logistique partenaire","Un modèle hybride selon les cas"
         ]},
-        { key:"delivery_app_needed", name:"Souhaitez-vous un espace ou une application dédiée aux livreurs ?", type:"radio", options:[V_OUI,"Non","Plus tard"]},
+        { key:"delivery_app_needed", name:"Souhaitez-vous un espace ou une application dédiée aux livreurs ?", type:"radio", condition:deliveryDetailsRelevant, options:[V_OUI,"Non","Plus tard"]},
         { key:"delivery_fee_calc", name:"Comment les frais de livraison doivent-ils être calculés ?", type:"checkbox", options:[
           "Tarif fixe","Selon la distance","Selon le poids","Selon la zone géographique","Gratuite au-delà d'un montant d'achat"
-        ]},
+        ], condition:deliveryDetailsRelevant},
         { key:"delivery_fee_payer", name:"Qui paie les frais de livraison ?", type:"radio", options:[
           "Le client","Le vendeur","La plateforme","Partagé entre plusieurs parties"
-        ]},
+        ], condition:deliveryDetailsRelevant},
         { key:"delivery_proof", name:"Quelle preuve de livraison souhaitez-vous ?", type:"checkbox", options:[
           "Code OTP","Signature","Photo","Confirmation du client dans l'application"
-        ]},
-        { key:"realtime_tracking", name:"Souhaitez-vous un suivi de livraison en temps réel ?", type:"radio", required:true, options:[V_OUI,"Non","Plus tard"]}
+        ], condition:deliveryDetailsRelevant},
+        { key:"realtime_tracking", name:"Souhaitez-vous un suivi de livraison en temps réel ?", type:"radio", condition:deliveryDetailsRelevant, required:true, options:[V_OUI,"Non","Plus tard"]}
       ]
     },
     {
@@ -330,6 +339,8 @@
         { key:"payment_methods", name:"Quels moyens de paiement souhaitez-vous accepter ?", type:"checkbox", required:true, options:[
           "Airtel Money","Moov Money","Zamani Cash","NITA / MyNITA","Wave","Carte bancaire","Paiement à la livraison","Autre"
         ]},
+        { key:"payment_methods_other", name:"Précisez les autres moyens de paiement", type:"text",
+          condition:function(){ return getCheckedList("payment_methods").indexOf("Autre") !== -1; } },
         { key:"has_psp_account", name:"Disposez-vous déjà d'un compte marchand auprès d'un prestataire de paiement ?", type:"radio", required:true, options:[V_OUI,"Non","En cours d'ouverture"]},
         { key:"psp_name", name:"Quel prestataire de paiement utilisez-vous déjà ?", type:"text",
           condition:function(get){ return get("has_psp_account")===V_OUI; } },
@@ -420,9 +431,6 @@
         { key:"launch_date_target", name:"Date cible de lancement (si connue)", type:"date" },
         { key:"launch_approach", name:"Quelle approche préférez-vous ?", type:"radio", required:true, options:[
           "Un MVP rapide, puis des évolutions successives","Une version complète avant le lancement public","Un lancement progressif, ville par ville"
-        ]},
-        { key:"budget_range", name:"Enveloppe budgétaire envisagée", type:"select", options:[
-          "Moins de 1 million FCFA","1 à 3 millions FCFA","3 à 5 millions FCFA","5 à 10 millions FCFA","10 à 20 millions FCFA","Plus de 20 millions FCFA","Je préfère en discuter directement"
         ]},
         { key:"post_launch_support", name:"Souhaitez-vous un accompagnement après la mise en ligne ?", type:"checkbox", options:[
           "Maintenance technique","Hébergement","Support client","Évolutions fonctionnelles","Aucun pour le moment"
