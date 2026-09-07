@@ -204,6 +204,7 @@
   var V_OUI = "Oui";
   var V_ADS_LANCEMENT = "Oui, dès le lancement";
   var V_ADS_PLUSTARD  = "Oui, mais plus tard";
+  var V_MANUAL_ONBOARDING = "Ajout manuel uniquement, par votre équipe";
 
   function hasVendors(get){
     var v = get("platform_model");
@@ -216,6 +217,9 @@
   function deliveryDetailsRelevant(get){
     return get("delivery_manager") !== "Chaque vendeur livre lui-même";
   }
+  function vendorVerificationRelevant(get){
+    return get("vendor_onboarding") !== V_MANUAL_ONBOARDING;
+  }
 
   /* ===================== Schéma du questionnaire ===================== */
   var STEPS = [
@@ -226,7 +230,7 @@
       fields: [
         { key:"project_name", name:"Nom du projet ou de la boutique (si déjà choisi)", type:"text" },
         { key:"vision", name:"Vision du projet et problème à résoudre", type:"textarea", required:true,
-          help:"En quelques phrases : que voulez-vous créer, et quel besoin du marché nigérien cela résout-il ?" },
+          help:"En quelques phrases : que voulez-vous créer, et quel besoin du marché visé cela résout-il ?" },
         { key:"platform_model", name:"Type de plateforme envisagée", type:"radio", required:true, options:[
           "Boutique en ligne — nous vendons uniquement nos propres produits",
           V_MARKETPLACE,
@@ -258,9 +262,9 @@
           "Inscription puis validation par votre équipe",
           "Ajout manuel uniquement, par votre équipe"
         ]},
-        { key:"vendor_kyc", name:"Une vérification d'identité ou d'entreprise du vendeur sera-t-elle exigée ?", type:"radio", required:true, options:[V_OUI,"Non","À déterminer"]},
+        { key:"vendor_kyc", name:"Une vérification d'identité ou d'entreprise du vendeur sera-t-elle exigée ?", type:"radio", condition:vendorVerificationRelevant, required:true, options:[V_OUI,"Non","À déterminer"]},
         { key:"vendor_kyc_docs", name:"Quels justificatifs souhaitez-vous demander aux vendeurs ?", type:"checkbox",
-          condition:function(get){ return get("vendor_kyc")===V_OUI; },
+          condition:function(get){ return vendorVerificationRelevant(get) && get("vendor_kyc")===V_OUI; },
           options:["Pièce d'identité","RCCM","NIF","Coordonnées bancaires","Justificatif d'activité"]},
         { key:"price_setter", name:"Qui fixe le prix de vente des produits ?", type:"radio", options:[
           "Le vendeur","La plateforme","Les deux, selon les cas"
