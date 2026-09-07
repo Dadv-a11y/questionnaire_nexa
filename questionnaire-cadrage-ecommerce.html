@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Questionnaire de cadrage — Plateforme e-commerce</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F6FA;
+    --paper:#FFFFFF;
+    --ink:#0A0E27;
+    --ink-soft:#5A6480;
+    --ink-faint:#8A9BBF;
+    --indigo:#0A0E27;
+    --indigo-2:#0052CC;
+    --gold:#0066FF;
+    --gold-deep:#0052CC;
+    --gold-soft:#E8F0FF;
+    --sage:#16A34A;
+    --line:#DDE2EF;
+    --line-soft:#EEF1F8;
+    --danger:#DC2626;
+    --danger-bg:#FEF2F2;
+    --serif:'Newsreader', Georgia, serif;
+    --sans:'IBM Plex Sans', Arial, sans-serif;
+    --rail-w:280px;
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:var(--serif); font-weight:500; margin:0;}
+  a{color:inherit;}
+  button{font-family:var(--sans);}
+  ::selection{background:var(--gold-soft);}
+  fieldset{border:none; margin:0; padding:0;}
+
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{
+    outline:2px solid var(--gold-deep);
+    outline-offset:2px;
+  }
+
+  .app{max-width:1180px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column;}
+
+  .topbar{display:flex; align-items:baseline; justify-content:space-between; padding:26px 28px 18px; gap:16px;}
+  .brand{display:flex; flex-direction:column; gap:2px;}
+  .brand-mark{font-family:var(--serif); font-size:22px; font-weight:600; letter-spacing:0.2px; color:var(--indigo);}
+  .brand-tag{font-size:13px; color:var(--ink-soft);}
+  .progress-figure{text-align:right; font-size:13px; color:var(--ink-soft); white-space:nowrap;}
+  .progress-figure strong{color:var(--indigo); font-weight:600;}
+
+  .mobile-progress{display:none; height:3px; background:var(--line-soft); position:relative; overflow:hidden;}
+  .mobile-progress-fill{position:absolute; left:0; top:0; bottom:0; width:0%; background:var(--gold); transition:width .4s var(--ease);}
+  .mobile-step-label{display:none; padding:12px 20px 0; font-size:13px; color:var(--ink-soft);}
+
+  .layout{flex:1; display:flex; align-items:flex-start; gap:0; padding:0 28px 60px;}
+
+  .rail{width:var(--rail-w); flex:0 0 var(--rail-w); padding:8px 22px 40px 0; position:sticky; top:24px;}
+  .rail-list{list-style:none; margin:0; padding:0; border-left:1px solid var(--line);}
+  .rail-item{position:relative; padding:9px 0 9px 22px; font-size:13.5px; color:var(--ink-faint); transition:color .2s;}
+  .rail-item::before{content:''; position:absolute; left:-4px; top:14px; width:7px; height:7px; border-radius:50%; background:var(--line); border:2px solid var(--bg);}
+  .rail-item .rn{display:inline-block; width:20px; color:var(--ink-faint); font-variant-numeric:tabular-nums;}
+  .rail-item.done{color:var(--ink-soft);}
+  .rail-item.done::before{background:var(--sage);}
+  .rail-item.current{color:var(--indigo); font-weight:600;}
+  .rail-item.current::before{background:var(--gold); width:9px; height:9px; left:-5px; top:13px;}
+  .rail-item.skipped{color:var(--ink-faint); text-decoration:line-through; text-decoration-color:var(--ink-faint);}
+  .rail-item.skipped::before{background:var(--bg); border-color:var(--line);}
+  .rail-note{margin-top:18px; padding-left:22px; font-size:12px; color:var(--ink-faint); line-height:1.5; max-width:210px;}
+
+  .panel-wrap{flex:1; min-width:0; padding-top:8px;}
+  .panel{background:var(--paper); border:1px solid var(--line); border-left:5px solid var(--gold); padding:44px 48px 40px; min-height:420px; position:relative;}
+  .step-eyebrow{font-size:13px; color:var(--ink-soft); margin-bottom:10px;}
+  .step-title{font-size:28px; line-height:1.25; color:var(--indigo); max-width:34ch;}
+  .step-subtitle{margin-top:10px; font-size:14.5px; color:var(--ink-soft); max-width:60ch; line-height:1.55;}
+  .fields{margin-top:32px; display:flex; flex-direction:column; gap:28px;}
+  .field{max-width:640px;}
+  .field-label{display:block; font-size:15px; font-weight:600; color:var(--ink); margin-bottom:4px;}
+  .field-help{font-size:13px; color:var(--ink-soft); margin-bottom:10px; line-height:1.5;}
+  .req-mark{color:var(--gold-deep); margin-left:3px;}
+
+  .input-text, .input-select{width:100%; font-family:var(--sans); font-size:15.5px; color:var(--ink); background:transparent; border:none; border-bottom:1.5px solid var(--line); padding:9px 2px; transition:border-color .2s;}
+  .input-text::placeholder{color:var(--ink-faint);}
+  .input-text:focus, .input-select:focus{border-bottom-color:var(--indigo);}
+  textarea.input-text{border:1.5px solid var(--line); padding:12px 14px; resize:vertical; min-height:96px; line-height:1.55;}
+  textarea.input-text:focus{border-color:var(--indigo);}
+  .input-select{appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8'><path d='M1 1l5 5 5-5' stroke='%235B6169' stroke-width='1.6' fill='none' fill-rule='evenodd'/></svg>"); background-repeat:no-repeat; background-position:right 4px center; padding-right:20px; cursor:pointer;}
+
+  .option-list{display:flex; flex-direction:column; gap:8px;}
+  .option-row{display:flex; align-items:flex-start; gap:12px; border:1.5px solid var(--line); padding:12px 14px; cursor:pointer; transition:border-color .15s, background .15s;}
+  .option-row:hover{border-color:var(--ink-faint);}
+  .option-row.is-checked{border-color:var(--indigo); background:var(--gold-soft);}
+  .option-row input{margin-top:2px; width:16px; height:16px; accent-color:var(--indigo); flex:0 0 auto;}
+  .option-row .opt-text{font-size:14.5px; color:var(--ink); line-height:1.45;}
+
+  .step-nav{margin-top:38px; display:flex; align-items:center; justify-content:space-between; gap:14px;}
+  .btn{font-size:14.5px; font-weight:600; padding:13px 26px; border:1.5px solid transparent; cursor:pointer; transition:background .15s, color .15s, border-color .15s, opacity .15s;}
+  .btn-primary{background:var(--indigo); color:#fff;}
+  .btn-primary:hover{background:var(--indigo-2);}
+  .btn-primary:disabled{opacity:.5; cursor:not-allowed;}
+  .btn-ghost{background:transparent; color:var(--ink-soft); border-color:var(--line);}
+  .btn-ghost:hover{border-color:var(--ink-faint); color:var(--ink);}
+  .btn-gold{background:var(--gold); color:#fff;}
+  .btn-gold:hover{background:var(--gold-deep);}
+  .nav-spacer{flex:1;}
+
+  .error-msg{font-size:13px; color:var(--danger); background:var(--danger-bg); padding:10px 12px; margin-top:16px; display:none;}
+  .error-msg.show{display:block;}
+
+  .intro-hero{max-width:620px;}
+  .intro-hero .step-title{font-size:34px; max-width:none;}
+  .intro-meta{display:flex; gap:26px; margin-top:28px; padding-top:22px; border-top:1px solid var(--line-soft); flex-wrap:wrap;}
+  .intro-meta div{font-size:13px; color:var(--ink-soft);}
+  .intro-meta strong{display:block; font-family:var(--serif); font-size:20px; color:var(--indigo); font-weight:600;}
+
+  .recap-section{margin-bottom:26px;}
+  .recap-section h3{font-size:15.5px; color:var(--indigo); font-weight:600; font-family:var(--sans); margin-bottom:10px; padding-bottom:7px; border-bottom:1px solid var(--line-soft);}
+  .recap-item{display:flex; gap:18px; padding:7px 0; font-size:13.5px; border-bottom:1px dashed var(--line-soft);}
+  .recap-item:last-child{border-bottom:none;}
+  .recap-q{flex:0 0 46%; color:var(--ink-soft);}
+  .recap-a{flex:1; color:var(--ink); font-weight:500;}
+  .recap-empty{color:var(--ink-faint); font-style:italic; font-weight:400;}
+
+  .step{display:none;}
+  .step.is-active{display:block;}
+
+  .panel[data-anim="in"]{animation:stepIn .32s var(--ease);}
+  @keyframes stepIn{from{opacity:0; transform:translateX(14px);} to{opacity:1; transform:translateX(0);}}
+  @media (prefers-reduced-motion: reduce){
+    .panel[data-anim="in"]{animation:none;}
+    .mobile-progress-fill{transition:none;}
+  }
+
+  .submit-note{font-size:12.5px; color:var(--ink-faint); max-width:60ch; line-height:1.6; margin-top:14px;}
+
+  @media (max-width:900px){
+    .rail{display:none;}
+    .layout{padding:0 18px 40px;}
+    .topbar{padding:18px 18px 0;}
+    .mobile-progress{display:block;}
+    .mobile-step-label{display:block;}
+    .panel{padding:28px 20px 30px; border-left-width:4px;}
+    .step-title{font-size:23px;}
+    .intro-hero .step-title{font-size:27px;}
+    .recap-item{flex-direction:column; gap:2px;}
+    .recap-q{flex:none;}
+  }
+</style>
+</head>
+<body>
+
+
+
+<div class="app">
+  <form id="cadrageForm" action="https://formsubmit.co/darilvia64@gmail.com" method="POST" novalidate>
+    <input type="hidden" name="_subject" id="subjectField" value="Nouveau questionnaire de cadrage — plateforme e-commerce">
+    <input type="hidden" name="_template" value="table">
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="_next" value="merci.html">
+    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+
+    <div class="topbar">
+      <div class="brand">
+        <span class="brand-mark">NEXA Digital Lab</span>
+        <span class="brand-tag">Questionnaire de cadrage — Plateforme de vente en ligne</span>
+      </div>
+      <div class="progress-figure" id="progressFigure"></div>
+    </div>
+
+    <div class="mobile-progress"><div class="mobile-progress-fill" id="mobileProgressFill"></div></div>
+    <div class="mobile-step-label" id="mobileStepLabel"></div>
+
+    <div class="layout">
+      <nav class="rail" aria-label="Étapes du questionnaire">
+        <ol class="rail-list" id="railList"></ol>
+        <p class="rail-note">Les sections non pertinentes pour votre projet sont automatiquement écartées au fil de vos réponses, et ne sont pas incluses dans l'envoi.</p>
+      </nav>
+      <div class="panel-wrap">
+        <div class="panel" id="panel" data-anim="in">
+          <!-- Le contenu des étapes est injecté par le script en fin de page -->
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ===================== Constantes de valeurs conditionnelles ===================== */
+  var V_MARKETPLACE = "Marketplace — plusieurs vendeurs indépendants vendent sur la plateforme";
+  var V_HYBRIDE      = "Modèle hybride — nos produits + des vendeurs partenaires";
+  var V_OUI = "Oui";
+  var V_ADS_LANCEMENT = "Oui, dès le lancement";
+  var V_ADS_PLUSTARD  = "Oui, mais plus tard";
+
+  function hasVendors(get){
+    var v = get("platform_model");
+    return v === V_MARKETPLACE || v === V_HYBRIDE;
+  }
+  function wantsAds(get){
+    var v = get("ads_enabled");
+    return v === V_ADS_LANCEMENT || v === V_ADS_PLUSTARD;
+  }
+
+  /* ===================== Schéma du questionnaire ===================== */
+  var STEPS = [
+    {
+      key: "vision",
+      title: "Votre vision & le modèle de la plateforme",
+      subtitle: "Ces premières réponses orientent tout le reste du questionnaire.",
+      fields: [
+        { key:"project_name", name:"Nom du projet ou de la boutique (si déjà choisi)", type:"text" },
+        { key:"vision", name:"Vision du projet et problème à résoudre", type:"textarea", required:true,
+          help:"En quelques phrases : que voulez-vous créer, et quel besoin du marché nigérien cela résout-il ?" },
+        { key:"platform_model", name:"Type de plateforme envisagée", type:"radio", required:true, options:[
+          "Boutique en ligne — nous vendons uniquement nos propres produits",
+          V_MARKETPLACE,
+          V_HYBRIDE
+        ]},
+        { key:"launch_zone", name:"Zone géographique de lancement", type:"radio", required:true, options:[
+          "Niamey uniquement","Plusieurs villes du Niger","Tout le Niger dès le lancement","Niger, puis expansion sous-régionale"
+        ]},
+        { key:"languages", name:"Langues disponibles sur la plateforme", type:"checkbox", options:[
+          "Français","Haoussa","Zarma","Autre langue"
+        ]}
+      ]
+    },
+    {
+      key:"vendors",
+      title:"Vendeurs & flux financiers",
+      subtitle:"Cette section détermine la mécanique commerciale entre vous, vos vendeurs et vos clients.",
+      condition: hasVendors,
+      fields:[
+        { key:"vendor_types", name:"Qui pourra vendre sur la plateforme ?", type:"checkbox", options:[
+          "Particuliers","Commerçants indépendants","Entreprises","Boutiques physiques","Marques"
+        ]},
+        { key:"vendor_onboarding", name:"Comment un vendeur rejoint-il la plateforme ?", type:"radio", required:true, options:[
+          "Inscription libre, sans validation",
+          "Inscription puis validation par votre équipe",
+          "Ajout manuel uniquement, par votre équipe"
+        ]},
+        { key:"vendor_kyc", name:"Une vérification d'identité ou d'entreprise du vendeur sera-t-elle exigée ?", type:"radio", required:true, options:[V_OUI,"Non","À déterminer"]},
+        { key:"vendor_kyc_docs", name:"Quels justificatifs souhaitez-vous demander aux vendeurs ?", type:"checkbox",
+          condition:function(get){ return get("vendor_kyc")===V_OUI; },
+          options:["Pièce d'identité","RCCM","NIF","Coordonnées bancaires","Justificatif d'activité"]},
+        { key:"price_setter", name:"Qui fixe le prix de vente des produits ?", type:"radio", options:[
+          "Le vendeur","La plateforme","Les deux, selon les cas"
+        ]},
+        { key:"payout_model", name:"Comment l'argent d'une vente doit-il circuler ?", type:"radio", required:true, options:[
+          "Reversement immédiat au vendeur après paiement",
+          "La plateforme conserve les fonds temporairement avant reversement",
+          "Le vendeur est payé uniquement après confirmation de la livraison",
+          "Cela dépend du vendeur ou de la catégorie de produit",
+          "Je ne sais pas encore"
+        ]},
+        { key:"vendor_revenue_model", name:"Comment la plateforme sera-t-elle rémunérée sur les ventes des vendeurs ?", type:"checkbox", options:[
+          "Commission sur chaque vente","Abonnement mensuel du vendeur","Frais d'inscription","Frais de mise en avant des produits"
+        ]}
+      ]
+    },
+    {
+      key:"catalog",
+      title:"Catalogue produits",
+      fields:[
+        { key:"categories", name:"Quelles catégories de produits seront vendues ?", type:"checkbox", required:true, options:[
+          "Mode & vêtements","Électronique & téléphonie","Alimentation","Beauté & cosmétique","Maison & électroménager","Automobile","Produits agricoles","Services","Autre"
+        ]},
+        { key:"catalog_launch_size", name:"Nombre de produits prévu au lancement", type:"select", required:true, options:[
+          "Moins de 100","100 à 1 000","1 000 à 10 000","10 000 à 50 000","Plus de 50 000"
+        ]},
+        { key:"catalog_target_size", name:"Nombre de produits prévu à moyen terme", type:"select", options:[
+          "Moins de 10 000","10 000 à 50 000","50 000 à 100 000","Plus de 100 000"
+        ]},
+        { key:"variants_needed", name:"Les produits auront-ils des variantes (taille, couleur, modèle...) ?", type:"radio", options:[V_OUI,"Non","À déterminer"]},
+        { key:"who_adds_products", name:"Qui ajoutera les produits au catalogue ?", type:"checkbox", options:[
+          "Les vendeurs eux-mêmes","Votre équipe","Import Excel / CSV","Une API ou un logiciel de gestion existant"
+        ]}
+      ]
+    },
+    {
+      key:"purchase",
+      title:"Parcours d'achat",
+      fields:[
+        { key:"guest_checkout", name:"Un compte est-il obligatoire pour commander ?", type:"radio", required:true, options:[
+          "Oui, un compte est obligatoire","Non, la commande en tant qu'invité est possible","Les deux sont possibles"
+        ]},
+        { key:"multi_vendor_cart", name:"Un même panier pourra-t-il contenir des produits de plusieurs vendeurs ?", type:"radio",
+          condition:hasVendors, required:true, options:[V_OUI,"Non, un panier = un seul vendeur","À déterminer"]},
+        { key:"returns_enabled", name:"Souhaitez-vous gérer les retours et remboursements ?", type:"radio", required:true, options:[V_OUI,"Non","À déterminer"]},
+        { key:"returns_details", name:"Précisions sur les retours (délais, qui paie les frais, qui décide du remboursement)", type:"textarea",
+          condition:function(get){ return get("returns_enabled")===V_OUI; } }
+      ]
+    },
+    {
+      key:"delivery",
+      title:"Livraison & logistique",
+      fields:[
+        { key:"delivery_manager", name:"Qui assurera la livraison des commandes ?", type:"radio", required:true, options:[
+          "Chaque vendeur livre lui-même","La plateforme dispose de sa propre flotte de livreurs","Des livreurs indépendants partenaires","Une société de logistique partenaire","Un modèle hybride selon les cas"
+        ]},
+        { key:"delivery_app_needed", name:"Souhaitez-vous un espace ou une application dédiée aux livreurs ?", type:"radio", options:[V_OUI,"Non","Plus tard"]},
+        { key:"delivery_fee_calc", name:"Comment les frais de livraison doivent-ils être calculés ?", type:"checkbox", options:[
+          "Tarif fixe","Selon la distance","Selon le poids","Selon la zone géographique","Gratuite au-delà d'un montant d'achat"
+        ]},
+        { key:"delivery_fee_payer", name:"Qui paie les frais de livraison ?", type:"radio", options:[
+          "Le client","Le vendeur","La plateforme","Partagé entre plusieurs parties"
+        ]},
+        { key:"delivery_proof", name:"Quelle preuve de livraison souhaitez-vous ?", type:"checkbox", options:[
+          "Code OTP","Signature","Photo","Confirmation du client dans l'application"
+        ]},
+        { key:"realtime_tracking", name:"Souhaitez-vous un suivi de livraison en temps réel ?", type:"radio", required:true, options:[V_OUI,"Non","Plus tard"]}
+      ]
+    },
+    {
+      key:"payment",
+      title:"Paiement",
+      fields:[
+        { key:"payment_methods", name:"Quels moyens de paiement souhaitez-vous accepter ?", type:"checkbox", required:true, options:[
+          "Airtel Money","Moov Money","Zamani Cash","NITA / MyNITA","Wave","Carte bancaire","Paiement à la livraison","Autre"
+        ]},
+        { key:"has_psp_account", name:"Disposez-vous déjà d'un compte marchand auprès d'un prestataire de paiement ?", type:"radio", required:true, options:[V_OUI,"Non","En cours d'ouverture"]},
+        { key:"psp_name", name:"Quel prestataire de paiement utilisez-vous déjà ?", type:"text",
+          condition:function(get){ return get("has_psp_account")===V_OUI; } },
+        { key:"transaction_fees_payer", name:"Qui supporte les frais de transaction du prestataire de paiement ?", type:"radio", options:[
+          "L'acheteur","Le vendeur","La plateforme","Partagé","Inclus dans le prix affiché"
+        ]}
+      ]
+    },
+    {
+      key:"reviews_messaging",
+      title:"Avis & messagerie",
+      fields:[
+        { key:"reviews_enabled", name:"Les clients pourront-ils laisser des avis et des notes ?", type:"radio", required:true, options:[V_OUI,"Non"]},
+        { key:"who_can_review", name:"Qui pourra laisser un avis ?", type:"radio",
+          condition:function(get){ return get("reviews_enabled")===V_OUI; },
+          options:["Tout utilisateur","Uniquement les acheteurs ayant commandé le produit","Uniquement après livraison confirmée"]},
+        { key:"messaging_channels", name:"Quels échanges de messagerie souhaitez-vous permettre ?", type:"checkbox", required:true, options:[
+          "Acheteur ↔ Vendeur, en temps réel","Acheteur ↔ Support","Vendeur ↔ Support","Vendeur ↔ Livreur"
+        ]},
+        { key:"messaging_moderation", name:"Les messages doivent-ils être modérés ?", type:"radio", options:[
+          "Oui, par une équipe humaine","Oui, automatiquement","Non"
+        ]}
+      ]
+    },
+    {
+      key:"ads",
+      title:"Publicité & produits sponsorisés",
+      subtitle:"Optionnel, mais utile si la publicité doit faire partie de votre modèle de revenus.",
+      fields:[
+        { key:"ads_enabled", name:"Souhaitez-vous un système publicitaire sur la plateforme ?", type:"radio", required:true, options:[
+          V_ADS_LANCEMENT, V_ADS_PLUSTARD, "Non", "À déterminer"
+        ]},
+        { key:"ads_formats", name:"Quels formats publicitaires envisagez-vous ?", type:"checkbox",
+          condition:wantsAds,
+          options:["Produits sponsorisés","Bannières","Mise en avant dans les résultats de recherche","Vidéo"]},
+        { key:"ads_buyers", name:"Qui pourra acheter de la publicité ?", type:"radio",
+          condition:wantsAds,
+          options:["Uniquement les vendeurs déjà présents sur la plateforme","Les vendeurs et des marques / entreprises externes"]}
+      ]
+    },
+    {
+      key:"technical",
+      title:"Supports techniques souhaités",
+      fields:[
+        { key:"platforms_wanted", name:"Quels supports souhaitez-vous au lancement ?", type:"checkbox", required:true, options:[
+          "Site web responsive","Application mobile Android","Application mobile iOS","Espace vendeur dédié","Application livreur dédiée","Back-office administrateur"
+        ]},
+        { key:"has_domain", name:"Disposez-vous déjà d'un nom de domaine ?", type:"radio", options:[V_OUI,"Non"]},
+        { key:"has_hosting", name:"Disposez-vous déjà d'un hébergement ou d'une infrastructure cloud ?", type:"radio", options:[V_OUI,"Non"]},
+        { key:"has_branding", name:"Disposez-vous déjà d'une identité visuelle (logo, charte) ?", type:"radio", options:[V_OUI,"En cours","Non"]}
+      ]
+    },
+    {
+      key:"compliance",
+      title:"Situation légale & conformité",
+      fields:[
+        { key:"company_status", name:"Votre entreprise est-elle déjà légalement constituée ?", type:"radio", required:true, options:[V_OUI,"Non","En cours de création"]},
+        { key:"legal_docs", name:"Quels documents possédez-vous déjà ?", type:"checkbox", options:[
+          "RCCM","NIF","CGU","CGV","Politique de confidentialité","Politique de retour","Aucun pour l'instant"
+        ]},
+        { key:"legal_advice", name:"Avez-vous déjà consulté un juriste pour ce projet ?", type:"radio", options:[V_OUI,"Non","C'est prévu"]}
+      ]
+    },
+    {
+      key:"volume",
+      title:"Volumétrie prévisionnelle",
+      subtitle:"Ces chiffres orientent directement le dimensionnement technique et le devis.",
+      fields:[
+        { key:"vendors_at_launch", name:"Nombre de vendeurs prévu au lancement", type:"select",
+          condition:hasVendors, required:true,
+          options:["Moins de 10","10 à 50","50 à 100","100 à 500","Plus de 500"]},
+        { key:"users_year1", name:"Nombre d'utilisateurs prévu la première année", type:"select", required:true, options:[
+          "Moins de 1 000","1 000 à 10 000","10 000 à 50 000","50 000 à 100 000","Plus de 100 000"
+        ]},
+        { key:"orders_launch_monthly", name:"Commandes mensuelles attendues au lancement", type:"select", required:true, options:[
+          "Moins de 100","100 à 500","500 à 1 000","1 000 à 5 000","Plus de 5 000"
+        ]},
+        { key:"orders_target_monthly", name:"Commandes mensuelles attendues à terme", type:"select", options:[
+          "Moins de 1 000","1 000 à 5 000","5 000 à 10 000","10 000 à 50 000","Plus de 50 000"
+        ]},
+        { key:"peak_periods", name:"Périodes de forte activité prévues (fêtes, saisons, événements...)", type:"text" }
+      ]
+    },
+    {
+      key:"planning",
+      title:"Planning & budget",
+      fields:[
+        { key:"launch_date_target", name:"Date cible de lancement (si connue)", type:"date" },
+        { key:"launch_approach", name:"Quelle approche préférez-vous ?", type:"radio", required:true, options:[
+          "Un MVP rapide, puis des évolutions successives","Une version complète avant le lancement public","Un lancement progressif, ville par ville"
+        ]},
+        { key:"budget_range", name:"Enveloppe budgétaire envisagée", type:"select", options:[
+          "Moins de 1 million FCFA","1 à 3 millions FCFA","3 à 5 millions FCFA","5 à 10 millions FCFA","10 à 20 millions FCFA","Plus de 20 millions FCFA","Je préfère en discuter directement"
+        ]},
+        { key:"post_launch_support", name:"Souhaitez-vous un accompagnement après la mise en ligne ?", type:"checkbox", options:[
+          "Maintenance technique","Hébergement","Support client","Évolutions fonctionnelles","Aucun pour le moment"
+        ]}
+      ]
+    },
+    {
+      key:"final",
+      title:"Priorités & derniers détails",
+      fields:[
+        { key:"must_have_features", name:"Fonctionnalités absolument indispensables au lancement", type:"textarea", required:true },
+        { key:"differentiators", name:"Ce qui différenciera votre plateforme de la concurrence (Facebook, WhatsApp, autres marketplaces)", type:"textarea" },
+        { key:"extra_info", name:"Autre chose à ajouter avant que nous préparions votre proposition ?", type:"textarea" }
+      ]
+    }
+  ];
+
+  var INTRO_KEY = "__intro";
+  var RECAP_KEY = "__recap";
+
+  /* ===================== Construction du DOM ===================== */
+  var form = document.getElementById("cadrageForm");
+  var panel = document.getElementById("panel");
+  var railList = document.getElementById("railList");
+  var progressFigure = document.getElementById("progressFigure");
+  var mobileFill = document.getElementById("mobileProgressFill");
+  var mobileLabel = document.getElementById("mobileStepLabel");
+
+  function slug(s){ return s.replace(/[^a-zA-Z0-9]+/g,"_"); }
+
+  function getValue(key){
+    var el = form.querySelector('[data-key="'+key+'"]');
+    if(!el) return "";
+    if(el.tagName === "DIV" || el.hasAttribute("data-group")){
+      var checked = form.querySelector('[data-key="'+key+'"] input:checked');
+      return checked ? checked.value : "";
+    }
+    return el.value || "";
+  }
+  function getCheckedList(key){
+    var nodes = form.querySelectorAll('[data-key="'+key+'"] input:checked');
+    var out = [];
+    nodes.forEach(function(n){ out.push(n.value); });
+    return out;
+  }
+
+  // Construit tous les champs d'une étape (une seule fois, en amont)
+  function buildField(field){
+    var wrap = document.createElement("div");
+    wrap.className = "field";
+    wrap.setAttribute("data-field-key", field.key);
+    if(field.condition) wrap.setAttribute("data-conditional","1");
+
+    var label = document.createElement("label");
+    label.className = "field-label";
+    label.textContent = field.name;
+    if(field.required){
+      var star = document.createElement("span");
+      star.className = "req-mark";
+      star.textContent = "*";
+      label.appendChild(star);
+    }
+    wrap.appendChild(label);
+
+    if(field.help){
+      var help = document.createElement("p");
+      help.className = "field-help";
+      help.textContent = field.help;
+      wrap.appendChild(help);
+    }
+
+    if(field.type === "text" || field.type === "email" || field.type === "tel" || field.type === "date"){
+      var input = document.createElement("input");
+      input.type = field.type;
+      input.className = "input-text";
+      input.name = field.name;
+      input.setAttribute("data-key", field.key);
+      if(field.required) input.required = true;
+      wrap.appendChild(input);
+    } else if(field.type === "textarea"){
+      var ta = document.createElement("textarea");
+      ta.className = "input-text";
+      ta.name = field.name;
+      ta.rows = 4;
+      ta.setAttribute("data-key", field.key);
+      if(field.required) ta.required = true;
+      wrap.appendChild(ta);
+    } else if(field.type === "select"){
+      var sel = document.createElement("select");
+      sel.className = "input-select";
+      sel.name = field.name;
+      sel.setAttribute("data-key", field.key);
+      if(field.required) sel.required = true;
+      var blank = document.createElement("option");
+      blank.value = ""; blank.textContent = "Sélectionner…";
+      sel.appendChild(blank);
+      field.options.forEach(function(opt){
+        var o = document.createElement("option");
+        o.value = opt; o.textContent = opt;
+        sel.appendChild(o);
+      });
+      wrap.appendChild(sel);
+    } else if(field.type === "radio" || field.type === "checkbox"){
+      var list = document.createElement("div");
+      list.className = "option-list";
+      list.setAttribute("data-key", field.key);
+      list.setAttribute("data-group","1");
+      list.setAttribute("data-type", field.type);
+      field.options.forEach(function(opt, i){
+        var row = document.createElement("label");
+        row.className = "option-row";
+        var inp = document.createElement("input");
+        inp.type = field.type;
+        inp.name = field.name;
+        inp.value = opt;
+        if(field.required && field.type === "radio") inp.required = true;
+        var txt = document.createElement("span");
+        txt.className = "opt-text";
+        txt.textContent = opt;
+        row.appendChild(inp);
+        row.appendChild(txt);
+        list.appendChild(row);
+      });
+      wrap.appendChild(list);
+    }
+
+    var err = document.createElement("p");
+    err.className = "error-msg";
+    err.setAttribute("data-error-for", field.key);
+    err.textContent = "Merci de répondre à cette question avant de continuer.";
+    wrap.appendChild(err);
+
+    return wrap;
+  }
+
+  function buildStepSection(step, stepIndex){
+    var section = document.createElement("div");
+    section.className = "step";
+    section.setAttribute("data-step-key", step.key);
+    if(step.condition) section.setAttribute("data-conditional","1");
+
+    var eyebrow = document.createElement("p");
+    eyebrow.className = "step-eyebrow";
+    eyebrow.setAttribute("data-eyebrow","1");
+    section.appendChild(eyebrow);
+
+    var title = document.createElement("h2");
+    title.className = "step-title";
+    title.textContent = step.title;
+    section.appendChild(title);
+
+    if(step.subtitle){
+      var sub = document.createElement("p");
+      sub.className = "step-subtitle";
+      sub.textContent = step.subtitle;
+      section.appendChild(sub);
+    }
+
+    var fieldsWrap = document.createElement("div");
+    fieldsWrap.className = "fields";
+    step.fields.forEach(function(f){ fieldsWrap.appendChild(buildField(f)); });
+    section.appendChild(fieldsWrap);
+
+    var nav = buildNav(stepIndex);
+    section.appendChild(nav);
+
+    return section;
+  }
+
+  function buildNav(stepIndex){
+    var nav = document.createElement("div");
+    nav.className = "step-nav";
+
+    var prev = document.createElement("button");
+    prev.type = "button";
+    prev.className = "btn btn-ghost";
+    prev.textContent = "Précédent";
+    prev.addEventListener("click", function(){ goRelative(-1); });
+    nav.appendChild(prev);
+
+    var spacer = document.createElement("div");
+    spacer.className = "nav-spacer";
+    nav.appendChild(spacer);
+
+    var next = document.createElement("button");
+    next.type = "button";
+    next.className = "btn btn-primary";
+    next.textContent = "Suivant";
+    next.addEventListener("click", function(){ attemptAdvance(); });
+    nav.appendChild(next);
+
+    return nav;
+  }
+
+  function buildIntroSection(){
+    var section = document.createElement("div");
+    section.className = "step";
+    section.setAttribute("data-step-key", INTRO_KEY);
+
+    section.innerHTML =
+      '<div class="intro-hero">' +
+      '<p class="step-eyebrow">Avant de commencer</p>' +
+      '<h2 class="step-title">Cadrons ensemble votre projet de plateforme de vente en ligne</h2>' +
+      '<p class="step-subtitle">Vos réponses nous permettent de définir précisément le périmètre, les fonctionnalités nécessaires et les contraintes du projet, afin de vous transmettre une proposition technique et financière fiable — sans allers-retours inutiles.</p>' +
+      '<div class="intro-meta">' +
+        '<div><strong>10–14</strong>sections, adaptées à votre modèle</div>' +
+        '<div><strong>~10 min</strong>selon vos réponses</div>' +
+        '<div><strong>1 envoi</strong>direct, rien à imprimer</div>' +
+      '</div>' +
+      '</div>';
+
+    var nav = document.createElement("div");
+    nav.className = "step-nav";
+    nav.style.marginTop = "34px";
+    var spacer = document.createElement("div");
+    spacer.className = "nav-spacer";
+    var start = document.createElement("button");
+    start.type = "button";
+    start.className = "btn btn-primary";
+    start.textContent = "Commencer";
+    start.addEventListener("click", function(){ attemptAdvance(); });
+    nav.appendChild(spacer);
+    nav.appendChild(start);
+    section.appendChild(nav);
+
+    return section;
+  }
+
+  function buildRecapSection(){
+    var section = document.createElement("div");
+    section.className = "step";
+    section.setAttribute("data-step-key", RECAP_KEY);
+
+    var eyebrow = document.createElement("p");
+    eyebrow.className = "step-eyebrow";
+    eyebrow.textContent = "Dernière étape";
+    section.appendChild(eyebrow);
+
+    var title = document.createElement("h2");
+    title.className = "step-title";
+    title.textContent = "Vérifiez votre récapitulatif";
+    section.appendChild(title);
+
+    var sub = document.createElement("p");
+    sub.className = "step-subtitle";
+    sub.textContent = "Seules les réponses aux sections pertinentes pour votre projet sont listées ci-dessous et transmises à NEXA Digital Lab.";
+    section.appendChild(sub);
+
+    var body = document.createElement("div");
+    body.id = "recapBody";
+    body.style.marginTop = "28px";
+    section.appendChild(body);
+
+    var nav = document.createElement("div");
+    nav.className = "step-nav";
+
+    var prev = document.createElement("button");
+    prev.type = "button";
+    prev.className = "btn btn-ghost";
+    prev.textContent = "Précédent";
+    prev.addEventListener("click", function(){ goRelative(-1); });
+    nav.appendChild(prev);
+
+    var spacer = document.createElement("div");
+    spacer.className = "nav-spacer";
+    nav.appendChild(spacer);
+
+    var submit = document.createElement("button");
+    submit.type = "submit";
+    submit.className = "btn btn-gold";
+    submit.id = "submitBtn";
+    submit.textContent = "Envoyer le questionnaire";
+    nav.appendChild(submit);
+
+    section.appendChild(nav);
+
+    var note = document.createElement("p");
+    note.className = "submit-note";
+    note.textContent = "L'envoi transmet directement vos réponses à l'équipe NEXA Digital Lab par e-mail. Vous recevrez une confirmation à l'écran suivant.";
+    section.appendChild(note);
+
+    return section;
+  }
+
+  // Assemble le DOM complet une seule fois
+  var allStepKeys = [INTRO_KEY];
+  panel.appendChild(buildIntroSection());
+  STEPS.forEach(function(step, i){
+    allStepKeys.push(step.key);
+    panel.appendChild(buildStepSection(step, i));
+  });
+  allStepKeys.push(RECAP_KEY);
+  panel.appendChild(buildRecapSection());
+
+  /* ===================== Visibilité conditionnelle & activation/désactivation ===================== */
+  function refreshConditionals(){
+    // Champs conditionnels à l'intérieur des étapes visibles
+    document.querySelectorAll('.field[data-conditional="1"]').forEach(function(fieldEl){
+      var key = fieldEl.getAttribute("data-field-key");
+      var fieldDef = findField(key);
+      var show = fieldDef && fieldDef.condition ? !!fieldDef.condition(getValue) : true;
+      setFieldEnabled(fieldEl, show);
+    });
+    // Étapes conditionnelles
+    document.querySelectorAll('.step[data-conditional="1"]').forEach(function(stepEl){
+      var key = stepEl.getAttribute("data-step-key");
+      var stepDef = findStep(key);
+      var show = stepDef && stepDef.condition ? !!stepDef.condition(getValue) : true;
+      stepEl.setAttribute("data-applicable", show ? "1" : "0");
+      if(!show){
+        stepEl.querySelectorAll("input, textarea, select").forEach(function(el){ el.disabled = true; });
+      } else {
+        // réactive sauf si un champ interne est lui-même conditionnellement masqué
+        stepEl.querySelectorAll('.field').forEach(function(fieldEl){
+          if(fieldEl.getAttribute("data-conditional") !== "1"){
+            fieldEl.querySelectorAll("input, textarea, select").forEach(function(el){ el.disabled = false; });
+          }
+        });
+      }
+    });
+  }
+  function setFieldEnabled(fieldEl, enabled){
+    fieldEl.style.display = enabled ? "" : "none";
+    fieldEl.querySelectorAll("input, textarea, select").forEach(function(el){ el.disabled = !enabled; });
+  }
+
+  function findField(key){
+    for(var i=0;i<STEPS.length;i++){
+      for(var j=0;j<STEPS[i].fields.length;j++){
+        if(STEPS[i].fields[j].key === key) return STEPS[i].fields[j];
+      }
+    }
+    return null;
+  }
+  function findStep(key){
+    for(var i=0;i<STEPS.length;i++){ if(STEPS[i].key === key) return STEPS[i]; }
+    return null;
+  }
+
+  /* ===================== Navigation ===================== */
+  var currentIndex = 0; // index dans allStepKeys
+
+  function isStepApplicable(key){
+    if(key === INTRO_KEY || key === RECAP_KEY) return true;
+    var stepDef = findStep(key);
+    if(!stepDef) return true;
+    return stepDef.condition ? !!stepDef.condition(getValue) : true;
+  }
+
+  function visibleStepKeys(){
+    return allStepKeys.filter(isStepApplicable);
+  }
+
+  function showStep(key){
+    document.querySelectorAll(".step").forEach(function(s){
+      s.classList.toggle("is-active", s.getAttribute("data-step-key") === key);
+    });
+    panel.setAttribute("data-anim","out");
+    void panel.offsetWidth;
+    panel.setAttribute("data-anim","in");
+    window.scrollTo({top:0, behavior:"smooth"});
+    updateEyebrow(key);
+    updateRail(key);
+    updateProgress(key);
+    if(key === RECAP_KEY) renderRecap();
+  }
+
+  function updateEyebrow(key){
+    if(key === INTRO_KEY || key === RECAP_KEY) return;
+    var vis = visibleStepKeys().filter(function(k){ return k!==INTRO_KEY && k!==RECAP_KEY; });
+    var pos = vis.indexOf(key) + 1;
+    var el = document.querySelector('.step[data-step-key="'+key+'"] [data-eyebrow]');
+    if(el) el.textContent = "Étape " + pos + " sur " + vis.length;
+  }
+
+  function updateRail(currentKey){
+    railList.innerHTML = "";
+    var dataSteps = allStepKeys.filter(function(k){ return k!==INTRO_KEY && k!==RECAP_KEY; });
+    var vis = visibleStepKeys().filter(function(k){ return k!==INTRO_KEY && k!==RECAP_KEY; });
+    var currentPos = vis.indexOf(currentKey);
+    var n = 0;
+    dataSteps.forEach(function(key){
+      var stepDef = findStep(key);
+      var applicable = isStepApplicable(key);
+      var li = document.createElement("li");
+      li.className = "rail-item";
+      if(!applicable){
+        li.classList.add("skipped");
+      } else {
+        var pos = vis.indexOf(key);
+        n = pos + 1;
+        if(key === currentKey) li.classList.add("current");
+        else if(pos < currentPos) li.classList.add("done");
+      }
+      var rn = document.createElement("span");
+      rn.className = "rn";
+      rn.textContent = applicable ? (vis.indexOf(key)+1) : "–";
+      li.appendChild(rn);
+      li.appendChild(document.createTextNode(stepDef.title));
+      railList.appendChild(li);
+    });
+    var recapLi = document.createElement("li");
+    recapLi.className = "rail-item" + (currentKey===RECAP_KEY ? " current" : "");
+    recapLi.innerHTML = '<span class="rn">✓</span>Récapitulatif & envoi';
+    railList.appendChild(recapLi);
+  }
+
+  function updateProgress(currentKey){
+    var vis = visibleStepKeys(); // inclut intro + recap
+    var idx = vis.indexOf(currentKey);
+    var pct = Math.round((idx / (vis.length - 1)) * 100);
+    progressFigure.innerHTML = "<strong>" + pct + "%</strong> complété";
+    mobileFill.style.width = pct + "%";
+    if(currentKey === INTRO_KEY){
+      mobileLabel.textContent = "Bienvenue";
+    } else if(currentKey === RECAP_KEY){
+      mobileLabel.textContent = "Récapitulatif & envoi";
+    } else {
+      var stepDef = findStep(currentKey);
+      var dataVis = vis.filter(function(k){ return k!==INTRO_KEY && k!==RECAP_KEY; });
+      mobileLabel.textContent = "Étape " + (dataVis.indexOf(currentKey)+1) + " / " + dataVis.length + " — " + stepDef.title;
+    }
+  }
+
+  function goRelative(delta){
+    var vis = visibleStepKeys();
+    var curKey = allStepKeys[currentIndex];
+    var pos = vis.indexOf(curKey);
+    var newPos = pos + delta;
+    if(newPos < 0 || newPos >= vis.length) return;
+    var newKey = vis[newPos];
+    currentIndex = allStepKeys.indexOf(newKey);
+    showStep(newKey);
+  }
+
+  function attemptAdvance(){
+    var curKey = allStepKeys[currentIndex];
+    if(curKey !== INTRO_KEY && !validateStep(curKey)) return;
+    goRelative(1);
+  }
+
+  function validateStep(key){
+    var stepEl = document.querySelector('.step[data-step-key="'+key+'"]');
+    var ok = true;
+    var firstInvalid = null;
+
+    stepEl.querySelectorAll('.field').forEach(function(fieldEl){
+      if(fieldEl.style.display === "none") return;
+      var fkey = fieldEl.getAttribute("data-field-key");
+      var fieldDef = findField(fkey);
+      var errEl = fieldEl.querySelector('[data-error-for="'+fkey+'"]');
+      var fieldOk = true;
+
+      if(fieldDef && fieldDef.required){
+        if(fieldDef.type === "checkbox"){
+          fieldOk = getCheckedList(fkey).length > 0;
+        } else if(fieldDef.type === "radio"){
+          fieldOk = getValue(fkey) !== "";
+        } else {
+          var input = fieldEl.querySelector('[data-key="'+fkey+'"]');
+          fieldOk = input && input.value.trim() !== "";
+        }
+      }
+
+      if(errEl) errEl.classList.toggle("show", !fieldOk);
+      if(!fieldOk){
+        ok = false;
+        if(!firstInvalid) firstInvalid = fieldEl;
+      }
+    });
+
+    if(firstInvalid) firstInvalid.scrollIntoView({behavior:"smooth", block:"center"});
+    return ok;
+  }
+
+  /* ===================== Récapitulatif ===================== */
+  function renderRecap(){
+    var body = document.getElementById("recapBody");
+    body.innerHTML = "";
+    STEPS.forEach(function(step){
+      if(step.condition && !step.condition(getValue)) return;
+      var visibleFields = step.fields.filter(function(f){
+        return !(f.condition && !f.condition(getValue));
+      });
+      var hasAnswer = visibleFields.some(function(f){
+        return f.type === "checkbox" ? getCheckedList(f.key).length>0 : getValue(f.key) !== "";
+      });
+      if(!hasAnswer) return;
+
+      var sec = document.createElement("div");
+      sec.className = "recap-section";
+      var h3 = document.createElement("h3");
+      h3.textContent = step.title;
+      sec.appendChild(h3);
+
+      visibleFields.forEach(function(f){
+        var val = f.type === "checkbox" ? getCheckedList(f.key).join(", ") : getValue(f.key);
+        if(!val) return;
+        var item = document.createElement("div");
+        item.className = "recap-item";
+        var q = document.createElement("div");
+        q.className = "recap-q";
+        q.textContent = f.name;
+        var a = document.createElement("div");
+        a.className = "recap-a";
+        a.textContent = val;
+        item.appendChild(q);
+        item.appendChild(a);
+        sec.appendChild(item);
+      });
+      body.appendChild(sec);
+    });
+  }
+
+  /* ===================== Réactivité des cases / radios (style visuel) ===================== */
+  form.addEventListener("change", function(e){
+    var row = e.target.closest ? e.target.closest(".option-row") : null;
+    if(row){
+      var group = row.closest('[data-group="1"]');
+      if(group){
+        group.querySelectorAll(".option-row").forEach(function(r){
+          var inp = r.querySelector("input");
+          r.classList.toggle("is-checked", inp && inp.checked);
+        });
+      }
+    }
+    refreshConditionals();
+    // Si l'étape courante est le récap (on ne peut pas y revenir en changeant un champ,
+    // mais on garde le sujet d'e-mail à jour dès que possible)
+    updateSubject();
+  });
+
+  function updateSubject(){
+    var subj = document.getElementById("subjectField");
+    var pname = getValue("project_name");
+    subj.value = "Cadrage plateforme e-commerce" + (pname ? " — " + pname : "");
+  }
+
+  /* ===================== Empêche l'envoi accidentel du formulaire ===================== */
+  form.addEventListener("keydown", function(e){
+    if(e.key !== "Enter") return;
+    var tag = (e.target.tagName || "").toLowerCase();
+    if(tag === "textarea") return;
+    var curKey = allStepKeys[currentIndex];
+    if(curKey === RECAP_KEY && e.target.id === "submitBtn") return;
+    e.preventDefault();
+    if(curKey !== RECAP_KEY) attemptAdvance();
+  });
+
+  form.addEventListener("submit", function(){
+    var btn = document.getElementById("submitBtn");
+    if(btn){
+      btn.disabled = true;
+      btn.textContent = "Envoi en cours…";
+    }
+    // pas de preventDefault : on laisse le POST natif partir vers formsubmit.co
+  });
+
+  /* ===================== Démarrage ===================== */
+  refreshConditionals();
+  showStep(INTRO_KEY);
+
+})();
+</script>
+</body>
+</html>

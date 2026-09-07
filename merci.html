@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merci — Questionnaire reçu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F6FA;
+    --paper:#FFFFFF;
+    --ink:#0A0E27;
+    --ink-soft:#5A6480;
+    --ink-faint:#8A9BBF;
+    --indigo:#0A0E27;
+    --indigo-2:#0052CC;
+    --gold:#0066FF;
+    --gold-deep:#0052CC;
+    --gold-soft:#E8F0FF;
+    --sage:#16A34A;
+    --line:#DDE2EF;
+    --line-soft:#EEF1F8;
+    --serif:'Newsreader', Georgia, serif;
+    --sans:'IBM Plex Sans', Arial, sans-serif;
+    --ease:cubic-bezier(.22,.61,.36,1);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 20px;
+  }
+  h1{font-family:var(--serif); font-weight:500; margin:0;}
+  a{color:var(--indigo); text-decoration-color:var(--line); text-underline-offset:3px;}
+  a:hover{text-decoration-color:var(--indigo);}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--gold-deep); outline-offset:2px;}
+
+  .card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-left:5px solid var(--gold);
+    max-width:520px;
+    width:100%;
+    padding:48px 44px 40px;
+    animation:cardIn .4s var(--ease);
+  }
+  @keyframes cardIn{
+    from{opacity:0; transform:translateY(10px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  @media (prefers-reduced-motion: reduce){ .card{animation:none;} }
+
+  .brand-mark{
+    font-family:var(--serif);
+    font-size:19px;
+    font-weight:600;
+    color:var(--indigo);
+    display:block;
+    margin-bottom:30px;
+  }
+
+  .check{
+    width:46px; height:46px;
+    border-radius:50%;
+    border:1.5px solid var(--gold);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:22px;
+  }
+  .check svg{width:20px; height:20px; display:block;}
+
+  h1{font-size:26px; color:var(--indigo); line-height:1.3; max-width:22ch;}
+
+  .lead{
+    margin-top:14px;
+    font-size:15px;
+    color:var(--ink-soft);
+    max-width:42ch;
+  }
+
+  .details{
+    margin-top:26px;
+    padding-top:22px;
+    border-top:1px solid var(--line-soft);
+    font-size:13.5px;
+    color:var(--ink-soft);
+    line-height:1.7;
+  }
+  .details strong{color:var(--ink); font-weight:600;}
+
+  .footer-note{
+    margin-top:28px;
+    font-size:12.5px;
+    color:var(--ink-faint);
+  }
+</style>
+</head>
+<body>
+
+
+  <main class="card">
+    <span class="brand-mark">NEXA Digital Lab</span>
+
+    <div class="check" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 12.5L9.5 18L20 6" stroke="#0066FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <h1>Merci, votre questionnaire est bien parti.</h1>
+    <p class="lead">Nous avons bien reçu vos réponses. Notre équipe les examine et revient vers vous avec une proposition technique et financière adaptée au périmètre de votre projet.</p>
+
+    <p class="footer-note">Vous pouvez fermer cette page en toute tranquillité.</p>
+  </main>
+
+</body>
+</html>
